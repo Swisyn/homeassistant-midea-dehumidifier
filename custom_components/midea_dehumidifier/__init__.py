@@ -1,14 +1,14 @@
 """
-Custom integation based on humidifer and sensor platforms for EVA II PRO WiFi Smart Dehumidifier appliance by Midea/Inventor.
+Custom integration based on humidifer and sensor platforms for EVA II PRO Wi-Fi Smart Dehumidifier appliance by Midea/Inventor.
 For more details please refer to the documentation at
 https://github.com/barban-dev/midea_inventor_dehumidifier
 """
-VERSION = '1.0.0'
+LOG_TAG = "midea_dehumidifier"
+VERSION = '1.0.5'
 
 DOMAIN = "midea_dehumidifier"
 MIDEA_API_CLIENT = "midea_api_client"
 MIDEA_TARGET_DEVICE = "midea_target_device"
-
 
 import logging
 import voluptuous as vol
@@ -36,49 +36,50 @@ CONFIG_SCHEMA = vol.Schema({
 
 async def async_setup(hass, config):
     """Set up client for Midea API based on configuration entries."""
-    _LOGGER.info("midea_dehumidifier: initializing platform...")
-    _LOGGER.debug("midea_dehumidifier: starting async_setup")
+    _LOGGER.info(LOG_TAG + ": initializing platform...")
+    _LOGGER.debug(LOG_TAG + ": starting async_setup")
 
     if DOMAIN not in config:
-        _LOGGER.error("midea_dehumi: cannot find midea_dehumi platform on configuration.yaml")
+        _LOGGER.error(LOG_TAG + ": cannot find midea_dehumi platform on configuration.yaml")
         return False
 
     from midea_inventor_lib import MideaClient
-    	
+
     username = config[DOMAIN].get(CONF_USERNAME)
     password = config[DOMAIN].get(CONF_PASSWORD)
     sha256password = config[DOMAIN].get(CONF_SHA256_PASSWORD)
     deviceId = config[DOMAIN].get(CONF_DEVICEID)
-	
-    #_LOGGER.debug("midea_dehumi: CONFIG PARAMS: username=%s, password=%s, sha256password=%s, deviceId=%s", username, password, sha256password, deviceId)
+
+    # _LOGGER.debug("midea_dehumi: CONFIG PARAMS: username=%s, password=%s, sha256password=%s, deviceId=%s",
+    # username, password, sha256password, deviceId)
 
     if not password and not sha256password:
-        _LOGGER.error("midea_dehumi: either plain-text password or password's sha256 hash should be specified in config entries.")
+        _LOGGER.error(LOG_TAG + ": either plain-text password or password's sha256 hash should be specified in config entries.")
         return False
 
-    #Create client
+    # Create client
     client = MideaClient(username, password, sha256password)
 
-    #Log-in to the Midea cloud Web Service and get the list of configured Midea/Inventor appliances for the user.
-    _LOGGER.info("midea_dehumi: logging into Midea API Web Service...")
+    # Log-in to the Midea cloud Web Service and get the list of configured Midea/Inventor appliances for the user.
+    _LOGGER.info(LOG_TAG + ": logging into Midea API Web Service...")
 
-    #res = client.login()
+    # res = client.login()
     res = await hass.async_add_executor_job(client.login)
     if res == -1:
-        _LOGGER.error("midea-dehumi: login error")
+        _LOGGER.error(LOG_TAG + ": login error")
         return False
     else:
         sessionId = client.current["sessionId"]
-        _LOGGER.info("midea-dehumi: login success, sessionId=%s", sessionId)
+        _LOGGER.info(LOG_TAG + ": login success, sessionId=%s", sessionId)
 
     appliances = {}
 
-    #appliances = client.listAppliances()
+    # appliances = client.listAppliances()
     appliances = await hass.async_add_executor_job(client.listAppliances)
-    
+
     appliancesStr = ""
     for a in appliances:
-        appliancesStr = "[id="+a["id"]+" type="+a["type"]+" name="+a["name"]+"]"
+        appliancesStr = "[id=" + a["id"] + " type=" + a["type"] + " name=" + a["name"] + "]"
         if a["onlineStatus"] == "1":
             appliancesStr += " is online,"
         else:
@@ -87,10 +88,10 @@ async def async_setup(hass, config):
             appliancesStr += " is active.\n"
         else:
             appliancesStr += " is not active.\n"
-		
-    _LOGGER.info("midea-dehumi: "+appliancesStr)
-    
-    #The first appliance having type="0xA1" is returned for default (TODO: otherwise, 'deviceId' configuration option can be used)
+
+    _LOGGER.info(LOG_TAG + ": " + appliancesStr)
+
+    # The first appliance having type="0xA1" is returned for default
     targetDevice = None
     if not deviceId:
         if appliances is not None:
@@ -101,22 +102,21 @@ async def async_setup(hass, config):
     else:
         if appliances is not None:
             for a in appliances:
-                if a["type"] == "0xA1" and deviceID == str(a["id"]):
+                if a["type"] == "0xA1" and deviceId == str(a["id"]):
                     targetDevice = a
 
-
     if targetDevice:
-        _LOGGER.info("midea-dehumidifier: device type 0xA1 found.")
+        _LOGGER.info(LOG_TAG + ": device type 0xA1 found.")
 
         hass.data[MIDEA_API_CLIENT] = client
-        _LOGGER.info("midea-dehumidifier: loading humidifier entity sub-component...")
+        _LOGGER.info(LOG_TAG + ": loading humidifier entity sub-component...")
         load_platform(hass, 'humidifier', DOMAIN, {MIDEA_TARGET_DEVICE: targetDevice}, config)
 
-        _LOGGER.info("midea-dehumidifier: loading sensor entity sub-component...")
+        _LOGGER.info(LOG_TAG + ": loading sensor entity sub-component...")
         load_platform(hass, 'sensor', DOMAIN, {MIDEA_TARGET_DEVICE: targetDevice}, config)
 
-        _LOGGER.info("midea_dehumidifier: platform successfuly initialized.")
+        _LOGGER.info(LOG_TAG + ": platform successfully initialized.")
         return True
     else:
-        _LOGGER.error("midea-dehumidifier: device type 0xA1 not found.")
+        _LOGGER.error(LOG_TAG + ": device type 0xA1 not found.")
         return False

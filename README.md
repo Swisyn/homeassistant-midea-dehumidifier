@@ -1,4 +1,4 @@
-[<img src = "https://github.com/barban-dev/homeassistant-midea-dehumidifier/blob/master/images/ha-logo.png?raw=true" height = "100">](https://www.home-assistant.io/) 
+[<img src = "https://github.com/Swisyn/homeassistant-midea-dehumidifier/blob/master/images/ha-logo.png?raw=true" height = "100">](https://www.home-assistant.io/) 
 # Home Assistant Custom Integration for Midea dehumidifiers (Inventor EVA II PRO WiFi / Comfee MDDP-50DEN7 appliances).
 
 [![ViewCount](https://views.whatilearened.today/views/github/barban-dev/midea_inventor_dehumidifier.svg)](http://github.com/barban-dev/homeassistant-midea-dehumidifier)
