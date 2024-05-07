@@ -5,6 +5,6 @@
   "issue_tracker": "https://github.com/Swisyn/homeassistant-midea-dehumidifier/issues",
   "dependencies": [],
   "codeowners": ["@Swisyn"],
-  "requirements": ["midea-inventor-lib==1.0.7"],
-  "version": "1.0.7"
+  "requirements": ["midea-inventor-dehumidifier==1.0.0"],
+  "version": "1.0.0"
 }

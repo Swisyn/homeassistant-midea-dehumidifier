@@ -4,7 +4,7 @@ For more details please refer to the documentation at
 https://github.com/barban-dev/midea_inventor_dehumidifier
 """
 LOG_TAG = "midea_dehumidifier"
-VERSION = '1.0.7'
+VERSION = '1.0.0'
 
 import logging
 
