@@ -19,7 +19,7 @@ from custom_components.midea_dehumidifier.humidifier import ATTR_CURRENT_HUMIDIT
 _LOGGER = logging.getLogger(__name__)
 
 
-async def async_setup_platform(hass, async_add_entities, discovery_info=None):
+async def async_setup_platform(hass, config, async_add_entities, discovery_info=None):
     """Set up available sensors for MideaDehumidifier Humidifier Entity."""
     _LOGGER.info(LOG_TAG + ": initializing sensor entity sub-component")
     _LOGGER.debug(LOG_TAG + ": starting async_setup_platform")

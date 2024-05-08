@@ -73,7 +73,7 @@ PROP_TO_ATTR = {
 }
 
 
-async def async_setup_platform(hass, async_add_entities, discovery_info=None):
+async def async_setup_platform(hass, config, async_add_entities, discovery_info=None):
     """Set up Midea/Inventor dehumidifier platform based on config_entry."""
     _LOGGER.info(LOG_TAG + ": Initializing humidifier platform")
     _LOGGER.debug(LOG_TAG + ": Starting async_setup_platform")
@@ -119,9 +119,9 @@ async def async_setup_platform(hass, async_add_entities, discovery_info=None):
     return True
 
 
-async def async_setup_entry(hass, async_add_entities):
+async def async_setup_entry(hass, config_entry, async_add_entities):
     """Set up the Dehumidifier device config entry."""
-    await async_setup_platform(hass, async_add_entities)
+    await async_setup_platform(hass, {}, async_add_entities)
 
 
 class MideaDehumidifierDevice(HumidifierEntity):
