@@ -1,5 +1,5 @@
 {
-   "name": "EVA II PRO WiFi Midea Inventor Dehumidifier custom integration",
+   "name": "Midea/Comfee Dehumidifier custom integration",
    "domains": ["humidifier", "sensor"],
    "codeowners": ["Swisyn"],
    "documentation": "https://github.com/Swisyn/homeassistant-midea-dehumidifier/blob/master/README.md",
